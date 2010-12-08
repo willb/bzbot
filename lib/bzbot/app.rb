@@ -4,7 +4,9 @@ module Bzbot
   class App
     include Bzbot::Bot
     
-    def main
+    def main(args=nil)
+      args ||= ARGV
+      
       DataMapper.setup(:default, data_url)
       
       DataMapper.finalize
