@@ -14,6 +14,6 @@ This is an IRC-bot interface to bugzilla.
 
 == Copyright
 
-Copyright 2010 Red HAt, Inc., and William C. Benton. See LICENSE.txt for
+Copyright 2010 Red Hat, Inc., and William C. Benton. See LICENSE.txt for
 further details.
 
