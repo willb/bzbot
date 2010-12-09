@@ -1,7 +1,6 @@
 # app.rb:  main
 
 require 'optparse'
-require 'yaml'
 
 module Bzbot
   class App
