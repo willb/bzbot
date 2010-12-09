@@ -1,6 +1,6 @@
 = bzbot
 
-Description goes here.
+This is an IRC-bot interface to bugzilla.
 
 == Contributing to bzbot
  
@@ -14,6 +14,6 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2010 Will Benton. See LICENSE.txt for
+Copyright 2010 Red HAt, Inc., and William C. Benton. See LICENSE.txt for
 further details.
 
