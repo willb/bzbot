@@ -38,7 +38,16 @@ end
 class Alias
   include DataMapper::Resource
   
-  property :id,         Serial
-  property :nick,       String, :unique_index => true
+  property :nick,       String, :key=>true
   property :email,      String
+end
+
+class User
+  include DataMapper::Resource
+  
+  property :nick,           String, :key=>true
+  property :queries,        Integer. :default=>0
+  property :nice_comments,  Integer. :default=>0
+  property :mean_comments,  Integer. :default=>0
+  property :ventriloquism,  Integer. :default=>0
 end
