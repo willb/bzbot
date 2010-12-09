@@ -17,11 +17,14 @@ Jeweler::Tasks.new do |gem|
   gem.license = "MIT"
   gem.summary = %Q{An IRC interface to bugzilla.}
   gem.description = %Q{An IRC interface to bugzilla.}
-  gem.email = "willbenton@gmail.com"
+  gem.email = "willb@redhat.com"
   gem.authors = ["Will Benton"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
+  gem.add_runtime_dependency 'isaac', '~> 0.2.6'
+  gem.add_runtime_dependency 'dm-core', '~> 1.0.2'
+  gem.add_runtime_dependency 'dm-migrations', '~> 1.0.2'
+  gem.add_runtime_dependency 'dm-aggregates', '~> 1.0.2'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
