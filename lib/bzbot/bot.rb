@@ -29,6 +29,7 @@ module Bzbot
     def add_simple_handler(bot,pattern,template)
       bot.on :channel, pattern do
         record_log
+        increment_counter(:queries)
         the_message = ERB.new(template).result(self.send(:binding))
         msg self.channel, the_message.to_s
       end
@@ -55,6 +56,8 @@ module Bzbot
     
         on :channel, /^bzbot[:,]{0,1} desc(ribe|)( |)([0-9]+)/ do
           record_log
+          increment_counter(:times_described)
+          
           bzdesc = ""
     
           begin
@@ -75,36 +78,48 @@ module Bzbot
     
         on :channel, /(bz|BZ)( |)([0-9]+)/ do
           record_log
+          increment_counter(:queries)
+          
           msg channel, "#{nick}: #{app.bzbot_bz_url}#{match[2]}"
         end
     
         on :channel, /^bzbot[:,]{0,1} help$/i do
           record_log
-          msg nick, "I will respond to messages on the channel of the form BZ([0-9]+) or UW#([0-9]+) and sent back a link to the relevant BZ or gittrac ticket"
+          msg nick, "I will respond to messages on the channel of the form BZ([0-9]+) or UW#([0-9]+) and send back a link to the relevant BZ or gittrac ticket.  I also have some other features."
         end
     
         on :channel, /(bzbot[:,]{0,1}\s*(thanks|thx)(.*)|(thanks|thx)(,|)\s*bzbot(.*))/i do
           record_log
+          increment_counter(:nice_comments)
+          
           random_welcome
         end
     
         on :channel, /bzbot\s*(rocks|rules|is cool|is great)/i do
           record_log
+          increment_counter(:nice_comments)
+
           random_happy
         end
     
         on :channel, /bzbot\s*(sucks|blows|is worse than gradware|is an embarrassment to Ruby hippies everywhere)/i do
           record_log
+          increment_counter(:mean_comments)
+          
           random_sad
         end
     
         on :private, /^emote (.*?) on (#.*)$/ do
           record_log
+          increment_counter(:ventriloquism)
+          
           action match[1], match[0]
         end
     
         on :private, /^say (.*?) on (#.*)$/ do
           record_log
+          increment_counter(:ventriloquism)
+
           msg match[1], match[0]
         end
     
@@ -122,6 +137,7 @@ module Bzbot
     
         on :channel, /^bzbot[:,]{0,1} apropos\s*(.*)$/ do
           record_log
+          increment_counter(:times_searched)
     
           words = match[0].split
           bugs = {}
@@ -159,12 +175,16 @@ module Bzbot
     
         on :channel, /^bzbot[:,]{0,1} (.*?) is bored$/ do
           record_log
+          increment_counter(:times_bored, normalize_nick(match[0]))
+
           bored(match[0])
         end
     
         on :channel, /^bzbot[:,]{0,1} (I'm|I am) bored$/i do
           record_log
-          bored(nick.gsub(/^_/, ""))
+          increment_counter(:times_bored)
+
+          bored(normalize_nick(nick))
         end
     
         on :channel, /^bzbot disconnect$/ do
@@ -188,6 +208,18 @@ module Bzbot
     
           def init_xmlrpc_bz
             @xmlrpc_bz = XMLRPC::Client.new2(app.xmlrpc_endpoint)
+          end
+    
+          # removes leading and trailing underscores
+          def normalize_nick(n)
+            n.gsub(/(^_*)|(_*$)/, "")
+          end
+          
+          def increment_counter(which,n=nil)
+            n ||= normalize_nick(nick)
+            user = User.first_or_create(:nick=>n)
+            user.send("#{which}=", user.send(which) + 1)
+            user.save
           end
     
           def bored(name)

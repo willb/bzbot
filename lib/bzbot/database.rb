@@ -46,8 +46,11 @@ class User
   include DataMapper::Resource
   
   property :nick,           String, :key=>true
-  property :queries,        Integer. :default=>0
-  property :nice_comments,  Integer. :default=>0
-  property :mean_comments,  Integer. :default=>0
-  property :ventriloquism,  Integer. :default=>0
+  property :queries,        Integer, :default=>0
+  property :nice_comments,  Integer, :default=>0
+  property :mean_comments,  Integer, :default=>0
+  property :ventriloquism,  Integer, :default=>0
+  property :times_searched, Integer, :default=>0
+  property :times_bored,    Integer, :default=>0
+  property :times_described,Integer, :default=>0
 end
