@@ -243,14 +243,6 @@ module Bzbot
             random_msg(messages)
           end
     
-          def check_for_achievements(channel, nick, bugid)
-            b_s = bugid.to_s
-            b_i = bugid.to_i
-            if b_s.reverse == b_s
-              msg channel, "#{nick} has unlocked a new bzbot achievement:  A bug, a plan, a canal, paguba!"
-            end
-          end
-    
           def random_msg(messages)
             the_msg = messages.sort_by {rand}.pop
             if the_msg.index("/")
