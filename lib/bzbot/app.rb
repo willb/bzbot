@@ -1,6 +1,7 @@
 # app.rb:  main
 
 require 'optparse'
+require 'yaml'
 
 module Bzbot
   class App
@@ -8,7 +9,7 @@ module Bzbot
     
     def main(args=nil)
       args ||= ARGV
-      
+
       parse_opts(args)
       
       DataMapper.setup(:default, data_url)
@@ -16,8 +17,8 @@ module Bzbot
       DataMapper.finalize
       DataMapper.auto_upgrade!
 
-      add_simple_handler bzbot, /(uw#|gt)( |)([0-9]+)/i do
-        "https://condor-wiki.cs.wisc.edu/index.cgi/tktview?tn=#{match[2]}"
+      extra_handlers.each do |re, template|
+        add_simple_handler bzbot, Regexp.new(re), template
       end
 
       bzbot.start
@@ -144,6 +145,21 @@ module Bzbot
         :product=>(ENV['BZBOT_PRODUCT'] || "Red Hat Enterprise MRG"),
         :max_results=>(ENV['BZBOT_MAX_RESULTS'].to_i rescue 20)
       }
+    end
+    
+    def extra_handlers
+      @extra_handlers ||= ENV.keys.grep(/^BZBOT_HANDLER_.*?_RE$/).inject({}) do |acc,key|
+        begin
+          re = Regexp.new(ENV[key], Regexp::IGNORECASE)
+          template = ENV[key.gsub(/_RE$/, "_TMPL")]
+          raise RuntimeError.new("bogus template value") unless template
+          acc[re] = template
+        rescue Exception => ex
+          puts "warning:  can't add extra handler #{key}:  make sure it is set to a valid regular expression and that #{key.sub(/_RE$/, "_TMPL")} is also set"
+        end
+        
+        acc
+      end
     end
   end
 end

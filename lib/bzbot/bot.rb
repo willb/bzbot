@@ -1,15 +1,15 @@
 require 'isaac/bot'
 require 'xmlrpc/client'
 
+require 'erb'
+
 module Bzbot
   module Bot
-    def add_simple_handler(bot,pattern,&result)
+    def add_simple_handler(bot,pattern,template)
       bot.on :channel, pattern do
         record_log
-        if block_given?
-          the_message = yield nick, match
-          msg channel, the_message
-        end
+        the_message = ERB.new(template).result(self.send(:binding))
+        msg self.channel, the_message.to_s
       end
     end
     
