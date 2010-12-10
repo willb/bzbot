@@ -54,7 +54,7 @@ module Bzbot
           init_xmlrpc_bz
         end
     
-        on :channel, /^bzbot[:,]{0,1} desc(ribe|)( |)([0-9]+)/ do
+        on :channel, /^bzbot[:,]{0,1}\s*desc(ribe|)( |)([0-9]+)/ do
           record_log
           increment_counter(:times_described)
           
@@ -83,7 +83,7 @@ module Bzbot
           msg channel, "#{nick}: #{app.bzbot_bz_url}#{match[2]}"
         end
     
-        on :channel, /^bzbot[:,]{0,1} help$/i do
+        on :channel, /^bzbot[:,]{0,1}\s*help$/i do
           record_log
           msg nick, "I will respond to messages on the channel of the form BZ([0-9]+) or UW#([0-9]+) and send back a link to the relevant BZ or gittrac ticket.  I also have some other features."
         end
@@ -135,7 +135,7 @@ module Bzbot
           end
         end
     
-        on :channel, /^bzbot[:,]{0,1} apropos\s*(.*)$/ do
+        on :channel, /^bzbot[:,]{0,1}\s*apropos\s*(.*)$/ do
           record_log
           increment_counter(:times_searched)
     
@@ -173,22 +173,22 @@ module Bzbot
           end  
         end
     
-        on :channel, /^bzbot[:,]{0,1} (.*?) is bored$/ do
+        on :channel, /^bzbot[:,]{0,1}\s*(.*?) is bored$/ do
           record_log
           increment_counter(:times_bored, normalize_nick(match[0]))
 
           bored(match[0])
         end
     
-        on :channel, /^bzbot[:,]{0,1} (I'm|I am) bored$/i do
+        on :channel, /^bzbot[:,]{0,1}\s*(I'm|I am) bored$/i do
           record_log
           increment_counter(:times_bored)
 
           bored(normalize_nick(nick))
         end
     
-        on :channel, /^bzbot disconnect$/ do
-          record log
+        on :channel, /^bzbot[:,]{0,1}\s*(disconnect|deactivate|quit|go away)$/i do
+          record_log
           msg channel, "I'm sorry, #{nick}, I'm afraid I can't do that."
         end
     
