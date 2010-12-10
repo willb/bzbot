@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'daemons'
+require 'bzbot'
+
+# Modify these (or set them in your environment) to configure bzbot
+ENV['BZBOT_NICK'] ||= 'bzbot'
+ENV['BZBOT_PORT'] ||= '6667'
+ENV['BZBOT_SERVER'] ||= 'irc.freenode.org'
+ENV['BZBOT_ROOMS'] ||= '#distcomp'
+ENV['BZBOT_HANDLER_UWGT_RE'] ||= '(uw#|gt)( |)([0-9]+)'
+ENV['BZBOT_HANDLER_UWGT_TMPL'] ||= '<%= nick %>: https://condor-wiki.cs.wisc.edu/index.cgi/tktview?tn=<%= match[2] %>'
+
+Daemons.run_proc('bzbot') do 
+  Bzbot::App.new.main
+end
