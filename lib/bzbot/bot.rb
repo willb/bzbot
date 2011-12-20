@@ -27,11 +27,11 @@ require 'erb'
 module Bzbot
   module Bot
     def add_simple_handler(bot,pattern,template)
+      add_query_handler(pattern, template)
       bot.on :channel, pattern do
         record_log
         increment_counter(:queries)
-        the_message = ERB.new(template).result(self.send(:binding))
-        msg self.channel, the_message.to_s
+        process_query
       end
     end
     
@@ -79,8 +79,7 @@ module Bzbot
         on :channel, /(bz|BZ)( |)([0-9]+)/ do
           record_log
           increment_counter(:queries)
-          
-          msg channel, "#{nick}: #{app.bzbot_bz_url}#{match[2]}"
+          process_query
         end
     
         on :channel, /^bzbot[:,]{0,1}\s*help$/i do
@@ -202,6 +201,27 @@ module Bzbot
         end
     
         helpers do
+          def query_handlers
+            @qhs = {}
+          end
+          
+          def add_query_handler(pattern, template)
+            @qhs[pattern] = template
+          end
+          
+          def process_query
+            message.scan(/(bz|BZ)( |)([0-9]+)/) do |bug|
+              msg channel, "#{nick}: #{app.bzbot_bz_url}#{bug[2]}"
+            end
+            
+            @qhs.each do |pattern, template|
+              message.scan(pattern) do |match|
+                the_message = ERB.new(template).result(self.send(:binding))
+                msg self.channel, the_message.to_s
+              end
+            end
+          end
+          
           def record_log
             LogRecord.create(:nick=>nick, :channel=>channel, :message=>message, :happened=>Time.now)
           end
